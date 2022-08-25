@@ -121,6 +121,7 @@ document.onfullscreenchange = (ev) => {
         time1.value = new Date(2022, 8, 24, h, m, s)
       }
       time2.value = null
+      time2.value = time2_default.value
       appState.value = 1
     }
   }
@@ -180,16 +181,18 @@ function updateCountdown(std) {
 
 <style scoped>
 .video-container {
-  width: 800px;
-  height: 450px;
+  width: 64vw;
+  height: 36vw;
   position: relative;
   box-shadow: 0 0 2px; 
   overflow: hidden;
+  transition: width, .5s, height, .5s;
 }
 
 video {
   width: 100%;
   height: 100%;
+  transition: opacity .5s;
 }
 
 .banner {
@@ -209,6 +212,7 @@ video {
   opacity: 0%;
   z-index: -1;
   font-family:'Courier New', Courier, monospace;
+  transition: opacity .5s;;
 }
 
 p {
@@ -221,12 +225,12 @@ p {
 }
 
 .visible {
-  opacity: 50%;
+  opacity: 60%;
   z-index: 1;
 }
 
 .video_pale {
-  opacity: 20%;
+  opacity: 50%;
 }
 
 .fullscreen {
