@@ -8,7 +8,7 @@ Since Sync is a web application, the video file must be compatible with a HTML5 
 
 ### Step 1: Select File
 
-Open [Sync](arthur-x.github.io/Sync), select the video and subtitle (optional) from your local computer. You can preview the video in the player. When finished, click the **Confirm** button. 
+Open [Sync](https://arthur-x.github.io/Sync/), select the video and subtitle (optional) from your local computer. You can preview the video in the player. When finished, click the **Confirm** button. 
 
 Note that Sync is just a static page, so no data will be uploaded when you use it. And you can still use it even without the internet.
 
