@@ -1,30 +1,27 @@
 <script setup>
 import { ref, computed } from 'vue'
 const time1 = ref()
-const time1_default = ref(new Date(2022, 8, 24, 0, 0))
 const time2 = ref()
 const vl_h = ref(24)
 const vl_m = ref(60)
 const vl_s = ref(60)
 const countdown = ref('')
 const appState = ref(0) // 0: Film not selected; 1: Film selected, timer not set; 2: Conuting down; 3: Full screen playing
+const uploadsignal = ref(0)
 
 const confirm_disable = computed(_=>{
   return !(time1.value != null && time2.value != null)
 })
 
-const time2_default = computed(_=>{
-  let check = time2.value == null
+const getNextMinute = _=> {
   let nd = new Date()
   nd.setSeconds(0)
-  if (!check) return nd
-  let ndd = time2duration(nd) + 120
+  let ndd = time2duration(nd) + 60
   if (ndd > 24 * 3600) nd -= 24*3600
   let {h, m, s} = duration2hms(ndd)
   nd.setHours(h, m, s)
   return nd
-})
-
+}
 const makeRange = (start, end) => {
   const result = []
   for (let i = start; i <= end; i++) {
@@ -57,6 +54,11 @@ function time2duration(time) {
   let s = time.getSeconds();
   return h * 3600 + m * 60 + s
 }
+function hms2time(h, m, s) {
+  let time = new Date()
+  time.setHours(h, m, s)
+  return time
+}
 function formatTime(h, m, s) {
   h = h < 10 ? '0'+h : h;
   m = m < 10 ? '0'+m : m;
@@ -64,22 +66,30 @@ function formatTime(h, m, s) {
   return h+':'+m+':'+s
 }
 
-function processFile(ev) {
+function processFilm(ev) {
   let curFiles = ev.target.files
   if (curFiles.length == 0) return
-  // reject non-mp4 videos
   if (curFiles[0].type != 'video/mp4') {
     alert('only mp4 files are supported')
     return
   }
   const video = document.getElementById("video")
   video.src = URL.createObjectURL(curFiles[0])
-  video.oncanplay = (_=> {
-    let {h, m, s} = duration2hms(video.duration)
-    vl_h.value = h
-    vl_m.value = m
-    vl_s.value = s
-  })
+  uploadsignal.value = 1
+}
+
+function processSubtitle(ev) {
+  let curFiles = ev.target.files
+  if (curFiles.length == 0) return
+  if (curFiles[0].name.substr(-4) != '.vtt') {
+    alert('only vtt files are supported')
+    return
+  }
+  const track = document.getElementById("track")
+  track.src = URL.createObjectURL(curFiles[0])
+}
+
+function confirm0() {
   appState.value = 1
 }
 
@@ -120,15 +130,37 @@ document.onfullscreenchange = (ev) => {
         let {h, m, s} = duration2hms(vc)
         time1.value = new Date(2022, 8, 24, h, m, s)
       }
-      time2.value = null
-      time2.value = time2_default.value
+      time2.value = getNextMinute()
       appState.value = 1
     }
   }
 }
 
+function time1change() {
+  const video = document.getElementById("video")
+  video.pause()
+  video.currentTime = time2duration(time1.value)
+}
+
+function time1focus() {
+  const video = document.getElementById("video")
+  video.pause()
+  if (vl_h.value == 24) {
+    let {h, m, s} = duration2hms(video.duration)
+    vl_h.value = h
+    vl_m.value = m
+    vl_s.value = s
+  }
+  let vc = video.currentTime
+  let {h, m, s} = duration2hms(vc)
+  time1.value = hms2time(h, m, s)
+}
+
+function time2focus() {
+  time2.value = getNextMinute()
+}
+
 function updateCountdown(std) {
-  // get current time
   let time = new Date();
   let ctd = time2duration(time)
   if (std < ctd) std += 24 * 3600
@@ -146,6 +178,7 @@ function updateCountdown(std) {
         controlslist="nodownload"
         :controls="appState<2"
         :class="{video_pale: appState==2}">
+        <track id="track" default kind="captions">
       </video>
       <div class="banner" :class="{visible: appState==2}">
         <p>SCREENING</p>
@@ -154,8 +187,11 @@ function updateCountdown(std) {
       </div>
     </div>
     <div v-if="appState<2" style="display: flex; place-items: center;">
-      <label for="file" class="el-button" v-if="appState==0">Select Film</label>
-      <input type="file" id="file" style="display: none;" v-if="appState==0" accept="video/mp4" @change="processFile"/>
+      <label for="film" class="el-button" v-if="appState==0">Select Video</label>
+      <input type="file" id="film" style="display: none;" v-if="appState==0" accept="video/mp4" @change="processFilm"/>
+      <label for="subtitle" class="el-button" v-if="appState==0">Select Subtitle</label>
+      <input type="file" id="subtitle" style="display: none;" v-if="appState==0" accept=".vtt" @change="processSubtitle"/>
+      <el-button v-if="appState==0" :disabled="uploadsignal==0" @click="confirm0">Confirm</el-button>
       <el-time-picker  
         :disabled-hours="disabledHours"
         :disabled-minutes="disabledMinutes"
@@ -165,15 +201,17 @@ function updateCountdown(std) {
         v-if="appState==1"
         v-model="time1" 
         placeholder="Jump To:"
-        :default-value="time1_default"
+        @change="time1change"
+        @focus="time1focus"
       />
       <el-time-picker 
         :editable=false
         :clearable=false
         v-if="appState==1"
         v-model="time2"
-        placeholder="Screen On:"
-        :default-value="time2_default"/>
+        placeholder="Screen At:"
+        @focus="time2focus"
+      />
       <el-button v-if="appState==1" :disabled="confirm_disable" @click="confirm">Confirm</el-button>
     </div>
 </div>
@@ -181,10 +219,11 @@ function updateCountdown(std) {
 
 <style scoped>
 .video-container {
-  width: 64vw;
-  height: 36vw;
+  width: 70vw;
+  height: 80vh;
   position: relative;
-  box-shadow: 0 0 2px; 
+  box-shadow: 0 0 2px;
+  border-radius: 4px; 
   overflow: hidden;
   transition: width, .5s, height, .5s;
 }
@@ -193,6 +232,13 @@ video {
   width: 100%;
   height: 100%;
   transition: opacity .5s;
+}
+
+video::cue {
+  background-color:transparent;
+  line-height: 1.5em;
+  font-weight: 600;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .banner {
@@ -236,5 +282,12 @@ p {
 .fullscreen {
   width: 100%;
   height: 100%;
+  box-shadow: none;
+  cursor: none;
+}
+
+.el-button {
+  width: 17.2vw;
+  transition: width .5s;
 }
 </style>

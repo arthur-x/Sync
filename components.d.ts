@@ -9,6 +9,5 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ElButton: typeof import('element-plus/es')['ElButton']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
   }
 }
