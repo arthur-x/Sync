@@ -4,7 +4,7 @@
 
 Sync allows you to easily set a timer for a video and let it play automatically.
 
-Since Sync is a web application, the video file must be compatible with a HTML5 video player. You will need a tool to convert unsupported files and it's easy. See [below](##file-preparation). Currently Sync is tested on Chrome for Windows.
+Since Sync is a web application, the video file must be compatible with a HTML5 video player. You will need a tool to convert unsupported files and it's easy. See [below](#file-preparation). Currently Sync is tested on Chrome for Windows.
 
 ### Step 1: Select File
 
@@ -34,7 +34,7 @@ To switch to another video, simply refresh the page and you will go back to Step
 
 ## File Preparation
 
-Download [FFmpeg](ffmpeg.org), add its `bin` folder to your `PATH` environment variable.
+Download [FFmpeg](https://ffmpeg.org), add its `bin` folder to your `PATH` environment variable.
 
 Navigate to your source video, use the following command to convert a `.mkv` file to a `.mp4` file and extract the subtitle.
 ```
