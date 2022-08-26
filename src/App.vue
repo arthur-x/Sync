@@ -10,14 +10,18 @@ const appState = ref(0) // 0: Film not selected; 1: Film selected, timer not set
 const uploadsignal = ref(0)
 
 const confirm_disable = computed(_=>{
-  return !(time1.value != null && time2.value != null)
+  let t1 = time1.value
+  let t2 = time2.value
+  let check1 = (t1 != undefined && t1 != null & t1 != '')
+  let check2 = (t2 != undefined && t2 != null & t2 != '')
+  return !(check1 && check2)
 })
 
 const getNextMinute = _=> {
   let nd = new Date()
   nd.setSeconds(0)
   let ndd = time2duration(nd) + 60
-  if (ndd > 24 * 3600) nd -= 24*3600
+  if (ndd >= 24 * 3600) nd -= 24*3600
   let {h, m, s} = duration2hms(ndd)
   nd.setHours(h, m, s)
   return nd
@@ -128,7 +132,7 @@ document.onfullscreenchange = (ev) => {
         video.pause()
         let vc = video.currentTime
         let {h, m, s} = duration2hms(vc)
-        time1.value = new Date(2022, 8, 24, h, m, s)
+        time1.value = hms2time(h, m, s)
       }
       time2.value = getNextMinute()
       appState.value = 1
@@ -198,8 +202,10 @@ function updateCountdown(std) {
         :disabled-seconds="disabledSeconds" 
         :editable=false 
         :clearable=false
+        prefix-icon="Film"
         v-if="appState==1"
         v-model="time1" 
+        :default-value="hms2time(0, 0, 0)"
         placeholder="Jump To:"
         @change="time1change"
         @focus="time1focus"
