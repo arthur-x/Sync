@@ -4,7 +4,7 @@
 
 Sync allows you to easily set a timer for a video and let it play automatically.
 
-Since Sync is a web application, the video must be compatible with a HTML5 video player. You will need a tool to convert local unsupported files and it's easy. See [below](#file-preparation). Currently Sync is tested on Chrome for Windows.
+Since Sync is a web application, the video must be compatible with a HTML5 video player. You will need a tool to convert local unsupported files and it's easy. See [below](#file-preparation).
 
 ### Step 1: Set URL/File
 
@@ -38,7 +38,7 @@ Now you should see a big countdown for your video. This means you entered the *S
 
 ![ScreenMode](./screenshots/screenmode.png)
 
-However, you can exit the *Screen Mode* at any time by simply pressing `esc`, which is the default way of exiting a full-screened window in Chrome. The video will be paused at the time you exit *Screen Mode* for you to set another timer.
+However, you can exit the *Screen Mode* at any time by simply pressing `esc`. The video will be paused at the time you exit *Screen Mode* for you to set another timer.
 
 ### Step 4: Another Round
 
@@ -64,4 +64,4 @@ Your can even specify which audio or subtitle to extract if there're multiple. R
 
 ## Credits
 
-Used [Element Plus](https://element-plus.gitee.io/zh-CN/).
+Used [Element Plus](https://element-plus.gitee.io/zh-CN/) for some UI components.
