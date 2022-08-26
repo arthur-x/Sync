@@ -2,11 +2,12 @@
 import { ref, computed } from 'vue'
 const time1 = ref()
 const time2 = ref()
+const inputURL = ref('')
 const vl_h = ref(24)
 const vl_m = ref(60)
 const vl_s = ref(60)
 const countdown = ref('')
-const appState = ref(0) // 0: Film not selected; 1: Film selected, timer not set; 2: Conuting down; 3: Full screen playing
+const appState = ref(-1) // -1: Src not selected; 0: Video not selected; 1: Video selected, timer not set; 2: Conuting down; 3: Full screen playing
 const uploadsignal = ref(0)
 
 const confirm_disable = computed(_=>{
@@ -68,6 +69,17 @@ function formatTime(h, m, s) {
   m = m < 10 ? '0'+m : m;
   s = s < 10 ? '0'+s : s;
   return h+':'+m+':'+s
+}
+
+function processURL() {
+  const video = document.getElementById("video")
+  video.src = inputURL.value
+  video.oncanplay = _=> {
+    uploadsignal.value = 1
+  }
+  video.onemptied = _=> {
+    uploadsignal.value = 0
+  }
 }
 
 function processFilm(ev) {
@@ -140,6 +152,23 @@ document.onfullscreenchange = (ev) => {
   }
 }
 
+document.onkeydown = (ev) => {
+  if (ev.key == 's' && ev.altKey) {
+    const video = document.getElementById("video")
+    video.src = ''
+    const track = document.getElementById("track")
+    track.src = ''
+    inputURL.value = ''
+    uploadsignal.value = 0
+    if (appState.value == 0) {
+      appState.value = -1
+    }
+    else if (appState.value == -1) {
+      appState.value = 0
+    }
+  }
+}
+
 function time1change() {
   const video = document.getElementById("video")
   video.pause()
@@ -191,11 +220,12 @@ function updateCountdown(std) {
       </div>
     </div>
     <div v-if="appState<2" style="display: flex; place-items: center;">
+      <el-input v-if="appState==-1" v-model="inputURL" placeholder="Input Video Source URL ('Alt-S' To Select Local Files Instead)" @change="processURL"/>
       <label for="film" class="el-button" v-if="appState==0">Select Video</label>
       <input type="file" id="film" style="display: none;" v-if="appState==0" accept="video/mp4" @change="processFilm"/>
       <label for="subtitle" class="el-button" v-if="appState==0">Select Subtitle</label>
       <input type="file" id="subtitle" style="display: none;" v-if="appState==0" accept=".vtt" @change="processSubtitle"/>
-      <el-button v-if="appState==0" :disabled="uploadsignal==0" @click="confirm0">Confirm</el-button>
+      <el-button v-if="appState<=0" :disabled="uploadsignal==0" @click="confirm0">Confirm</el-button>
       <el-time-picker  
         :disabled-hours="disabledHours"
         :disabled-minutes="disabledMinutes"
@@ -209,6 +239,7 @@ function updateCountdown(std) {
         placeholder="Jump To:"
         @change="time1change"
         @focus="time1focus"
+        style="display: inline-flex; width: var(--component-width); transition: width .25s;"
       />
       <el-time-picker 
         :editable=false
@@ -217,6 +248,7 @@ function updateCountdown(std) {
         v-model="time2"
         placeholder="Screen At:"
         @focus="time2focus"
+        style="display: inline-flex; width: var(--component-width); transition: width .25s;"
       />
       <el-button v-if="appState==1" :disabled="confirm_disable" @click="confirm">Confirm</el-button>
     </div>
@@ -231,13 +263,13 @@ function updateCountdown(std) {
   box-shadow: 0 0 2px;
   border-radius: 4px; 
   overflow: hidden;
-  transition: width, .5s, height, .5s;
+  transition: width, .25s, height, .25s;
 }
 
 video {
   width: 100%;
   height: 100%;
-  transition: opacity .5s;
+  transition: opacity .25s;
 }
 
 video::cue {
@@ -264,7 +296,7 @@ video::cue {
   opacity: 0%;
   z-index: -1;
   font-family:'Courier New', Courier, monospace;
-  transition: opacity .5s;;
+  transition: opacity .25s;;
 }
 
 p {
@@ -293,7 +325,12 @@ p {
 }
 
 .el-button {
-  width: 17.2vw;
-  transition: width .5s;
+  width: var(--component-width);
+  transition: width .25s;
+}
+
+.el-input {
+  width: calc(2 * var(--component-width));
+  transition: width .25s;
 }
 </style>

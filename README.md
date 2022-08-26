@@ -4,19 +4,31 @@
 
 Sync allows you to easily set a timer for a video and let it play automatically.
 
-Since Sync is a web application, the video file must be compatible with a HTML5 video player. You will need a tool to convert unsupported files and it's easy. See [below](#file-preparation). Currently Sync is tested on Chrome for Windows.
+Since Sync is a web application, the video must be compatible with a HTML5 video player. You will need a tool to convert local unsupported files and it's easy. See [below](#file-preparation). Currently Sync is tested on Chrome for Windows.
 
-### Step 1: Select File
+### Step 1: Set URL/File
 
-Open [Sync](https://arthur-x.github.io/Sync/), select the video and subtitle (optional) from your local computer. You can preview the video in the player. When finished, click the **Confirm** button. 
+Open [Sync](https://arthur-x.github.io/Sync/).
 
-Note that Sync is just a static page, so no data will be uploaded when you use it. And you can still use it even without the internet.
+Input the video source URL in the textbox (not the website URL). You can preview the video in the player above.
+
+![ScreenMode](./screenshots/input1.png)
+
+Or, press `Alt-S` to select the video and subtitle (optional) from your local computer.  
+
+![ScreenMode](./screenshots/input2.png)
+
+You can use `Alt-S` to toggle between those two input modes.
+
+When finished, click the **Confirm** button. 
 
 ### Step 2: Set Timer
 
+![ScreenMode](./screenshots/timer.png)
+
 Click on the left time-picker to choose a timestamp within the video's duration, this is where the video will begin to play.
 
-Click on the right time-picker to choose a local time, at which the video will start playing. If you choose a time before the current time, Sync will assume that it's for the next day.
+Click on the right time-picker to choose a local time, this is when the video will start playing. If you choose a time before the current time, Sync will assume that it's for the next day.
 
 Click the **Confirm** button when you are ready.
 
@@ -24,7 +36,7 @@ Click the **Confirm** button when you are ready.
 
 Now you should see a big countdown for your video. This means you entered the *Screen Mode*, and the video will play itself all the way to the end when countdown goes to 0. In this mode, you cannot pause the video, and all controls (including cursor) are hided. 
 
-![ScreenMode](screenmode.png)
+![ScreenMode](./screenshots/screenmode.png)
 
 However, you can exit the *Screen Mode* at any time by simply pressing `esc`, which is the default way of exiting a full-screened window in Chrome. The video will be paused at the time you exit *Screen Mode* for you to set another timer.
 
@@ -48,7 +60,7 @@ ffmpeg -i yourSource.mkv -c:v h264 -c:a aac output.mp4
 
 ffmpeg -i yourSource.mkv -vn -an -c:s webvtt subtitle.vtt
 ```
-Your can even specify which audio or subtitle to extract if there're multiple. Refer to the `FFmpeg` guide for details.
+Your can even specify which audio or subtitle to extract if there're multiple. Refer to the FFmpeg guide for details.
 
 ## Credits
 
