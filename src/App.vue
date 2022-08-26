@@ -7,6 +7,7 @@ const vl_h = ref(24)
 const vl_m = ref(60)
 const vl_s = ref(60)
 const countdown = ref('')
+const control = ref('')
 const appState = ref(-1) // -1: Src not selected; 0: Video not selected; 1: Video selected, timer not set; 2: Conuting down; 3: Full screen playing
 const uploadsignal = ref(0)
 
@@ -162,9 +163,11 @@ document.onkeydown = (ev) => {
     uploadsignal.value = 0
     if (appState.value == 0) {
       appState.value = -1
+      control.value = ''
     }
     else if (appState.value == -1) {
       appState.value = 0
+      control.value = 'nodownload'
     }
   }
 }
@@ -208,7 +211,7 @@ function updateCountdown(std) {
       <video
         id="video"
         disablepictureinpicture
-        controlslist="nodownload"
+        :controlslist="control"
         :controls="appState<2"
         :class="{video_pale: appState==2}">
         <track id="track" default kind="captions">
