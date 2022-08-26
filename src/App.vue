@@ -114,6 +114,7 @@ function confirm() {
   const video = document.getElementById("video")
   video.pause()
   video.currentTime = time2duration(time1.value)
+  if (video.textTracks) video.textTracks[0].mode = 'hidden'
   let del = document.documentElement
   del.requestFullscreen()
   beginCountdown()
@@ -134,18 +135,30 @@ async function beginCountdown() {
   }
   appState.value = 3
   const video = document.getElementById("video")
+  if (video.textTracks) video.textTracks[0].mode = 'showing'
   video.play()
+}
+
+function updateCountdown(std) {
+  let time = new Date();
+  let ctd = time2duration(time)
+  if (std < ctd) std += 24 * 3600
+  let {h, m, s} = duration2hms(std - ctd)
+  countdown.value = formatTime(h, m, s)
 }
 
 document.onfullscreenchange = (ev) => {
   if (document.fullscreenElement == null) {
     if (appState.value >= 2) {
+      const video = document.getElementById("video")
       if (appState.value == 3) {
-        const video = document.getElementById("video")
         video.pause()
         let vc = video.currentTime
         let {h, m, s} = duration2hms(vc)
         time1.value = hms2time(h, m, s)
+      }
+      else {
+        if (video.textTracks) video.textTracks[0].mode = 'showing'
       }
       time2.value = getNextMinute()
       appState.value = 1
@@ -194,14 +207,6 @@ function time1focus() {
 
 function time2focus() {
   time2.value = getNextMinute()
-}
-
-function updateCountdown(std) {
-  let time = new Date();
-  let ctd = time2duration(time)
-  if (std < ctd) std += 24 * 3600
-  let {h, m, s} = duration2hms(std - ctd)
-  countdown.value = formatTime(h, m, s)
 }
 </script>
 
