@@ -60,7 +60,11 @@ ffmpeg -i yourSource.mkv -c:v h264 -c:a aac output.mp4
 
 ffmpeg -i yourSource.mkv -vn -an -c:s webvtt subtitle.vtt
 ```
-Your can even specify which audio or subtitle to extract if there're multiple. Refer to the FFmpeg guide for details.
+Your can even specify which audio or subtitle to extract if there're multiple. To do this, use `ffprobe yourSource.mkv` to list all stream channels, find the one you want, and use the `-map` option. For example, if you want the second subtitle (usually it's in stream #0:3), use:
+```
+ffmpeg -i yourSource.mkv -map 0:3 -vn -an -c:s webvtt subtitle2.vtt
+```
+You can refer to the FFmpeg guide for more details.
 
 ## Credits
 
